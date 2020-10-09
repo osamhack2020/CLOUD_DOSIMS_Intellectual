@@ -31,6 +31,7 @@ import {MenuHome, MenuPassApply, MenuProfile, MenuPassDetail, MenuPassConfirm,
 
 const drawerWidth = 240;
 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -60,20 +61,10 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
     width: drawerWidth,
-    backgroundImage: `url(${Sidebar})`,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -89,6 +80,15 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       width: theme.spacing(0),
     },
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
+  },
+  title: {
+    flexGrow: 1,
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Home(props) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
       setOpen(true);
     };
@@ -163,7 +163,7 @@ export default function Home(props) {
                             DOSIMS:&nbsp;국방장병출타통합관리체계  
                         </Typography>
                         <Typography component="h1" variant="subtitle2" color="ingerit" noWrap text-align="center">
-                            안녕하세요&nbsp;{name}&nbsp;님&nbsp;&nbsp;&nbsp;
+                            안녕하세요&nbsp;{Rank}&nbsp;{name}&nbsp;님&nbsp;&nbsp;&nbsp;
                         </Typography>
                         <Button 
                             type="submit"
@@ -174,7 +174,6 @@ export default function Home(props) {
                         </Button>
                     </Toolbar>
                 </AppBar>
-
                 <Drawer
                     classes={{
                         paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
@@ -216,8 +215,8 @@ export default function Home(props) {
     else if((sessionStorage.getItem('CheckLogin')) == 2) {
         return(
             <div className={classes.root}>
-                <CssBaseline/>
-                <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+            <CssBaseline/>
+            <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
                 <IconButton
                     edge="start"
@@ -267,7 +266,6 @@ export default function Home(props) {
                     <Divider/>
                     <List>{MenuPassConfirm}</List>
                     <List>{MenuPassDetail}</List>
-
                 </Drawer>
                 <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
@@ -378,7 +376,7 @@ export default function Home(props) {
         PhoneNo: usePhoneNo
       }
       if((sessionStorage.getItem('CheckLogin')) == 1) {
-        db.changeProfile(data,sessionStoragcde.getItem('LoginedServiceNo'));
+        db.changeProfile(data,sessionStorage.getItem('LoginedServiceNo'));
         alert("개인정보가 변경되었습니다.")
         props.history.replace('/Profile')
         return;
