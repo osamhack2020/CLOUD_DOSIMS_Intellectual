@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {Components} from 'react';
+import db from '../firebase'
 import dbfunction from '../function'
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -25,7 +26,13 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import {MenuHome, MenuPassApply, MenuProfile, MenuPassDetail, MenuPassConfirm,
   MenuDashboard, MenuMessageSend, MenuMessageConfirm, MenuMessageSendAdmin,
   MenuMessageConfirmAdmin, MenuLocationManage} from '../menu'
-
+  import Table from '@material-ui/core/Table';
+  import TableBody from '@material-ui/core/TableBody';
+  import TableCell from '@material-ui/core/TableCell';
+  import TableHead from '@material-ui/core/TableHead';
+  import TableRow from '@material-ui/core/TableRow';
+import { ReplyTwoTone } from '@material-ui/icons';
+import { render } from '@testing-library/react';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -106,8 +113,9 @@ const useStyles = makeStyles((theme) => ({
     height: 240,
   },
 }));
+var rows = []
 
-export default function Home(props) {
+export default function MessageConfirm(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
@@ -116,76 +124,78 @@ export default function Home(props) {
     const handleDrawerClose = () => {
       setOpen(false);
     };
-    
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
     var name = sessionStorage.getItem('LoginedName');
     //병
+    
+    
+
     if((sessionStorage.getItem('CheckLogin')) == 1){
-        return(
-            <div className={classes.root}>
-                <CssBaseline/>
-                <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-                <Toolbar className={classes.toolbar}>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                >
-                <MenuIcon />
-                </IconButton>
-                <Typography component="h1" variant="h6" color="ingerit" noWrap className={classes.title} text-align="center">
-                  DOSIMS:&nbsp;국방장병출타통합관리체계  
-                </Typography>
-                <Typography component="h1" variant="subtitle2" color="ingerit" noWrap text-align="center">
-                  안녕하세요&nbsp;{name}&nbsp;님&nbsp;&nbsp;&nbsp;
-                </Typography>
-                <Button 
-                    type="submit"
-                    variant="contained"
-                    color="secondary"
-                    onClick={Logout}>
-                    로그아웃
-                </Button>
-                </Toolbar>
-                </AppBar>
-                <Drawer
-                    variant="permanent"
-                    classes={{
-                        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-                    }}
-                    open={open}
-                >
-                    <div className={classes.toolbarIcon}>
-                        <IconButton onClick={handleDrawerClose}>
-                            <ChevronLeftIcon/>
-                        </IconButton>
-                    </div>
-                    <Divider/>
-                    <List>{MenuHome}</List>
-                    <List>{MenuProfile}</List>
-                    <Divider/>
-                    <List>{MenuPassApply}</List>
-                    <List>{MenuPassDetail}</List>
-                    <Divider/>
-                    <List>{MenuMessageSend}</List>
-                    <List>{MenuMessageConfirm}</List>
-                </Drawer>
-                <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Paper className={classes.paper}>
-                    <Welcome></Welcome>
-                    </Paper>
-                  </Grid>
-                </Grid>
-                </Container>
-            </main>
-            </div>
-        )
+      
+      return (
+        <div className={classes.root}>
+                    <CssBaseline/>
+                    <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+                    <Toolbar className={classes.toolbar}>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                    >
+                    <MenuIcon />
+                    </IconButton>
+                    <Typography component="h1" variant="h6" color="ingerit" noWrap className={classes.title} text-align="center">
+                      DOSIMS:&nbsp;국방장병출타통합관리체계  
+                    </Typography>
+                    <Typography component="h1" variant="subtitle2" color="ingerit" noWrap text-align="center">
+                      안녕하세요&nbsp;{name}&nbsp;님&nbsp;&nbsp;&nbsp;
+                    </Typography>
+                    <Button 
+                        type="submit"
+                        variant="contained"
+                        color="secondary"
+                        onClick={Logout}>
+                        로그아웃
+                    </Button>
+                    </Toolbar>
+                    </AppBar>
+                    <Drawer
+                        variant="permanent"
+                        classes={{
+                            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                        }}
+                        open={open}
+                    >
+                        <div className={classes.toolbarIcon}>
+                            <IconButton onClick={handleDrawerClose}>
+                                <ChevronLeftIcon/>
+                            </IconButton>
+                        </div>
+                        <Divider/>
+                        <List>{MenuHome}</List>
+                        <List>{MenuProfile}</List>
+                        <Divider/>
+                        <List>{MenuPassApply}</List>
+                        <List>{MenuPassDetail}</List>
+                        <Divider/>
+                        <List>{MenuMessageSend}</List>
+                        <List>{MenuMessageConfirm}</List>
+                    </Drawer>
+            <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
+            <Container maxWidth="lg" className={classes.container}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                <TableList rowslist={db.LoadData()}/>
+              </Paper>
+              </Grid>
+            </Grid>
+            </Container>
+        </main>
+        </div>)
     } else{
         alert("로그인 하십쇼...")
         props.history.replace('/')
@@ -195,24 +205,55 @@ export default function Home(props) {
     }
 
     async function Logout() {
-        try{
-            await dbfunction.dblogout()
-            props.history.replace('/')
-        } catch(error) {
-            alert(error.message)
-        }            
+      try{
+          await dbfunction.dblogout()
+          props.history.replace('/')
+      } catch(error) {
+          alert(error.message)
+      }            
     }
 
-    function Welcome() {
-      return(
-       <Button 
-        type="submit"
-        variant="contained"
-        color="secondary"
-        onClick={Logout}>
-        로그아웃
-      </Button>
-      )
-    }
+    
 
+    function CreateData(id, Title, Sender, Time){
+      return {id, Title, Sender, Time};
+  }
+}
+
+async function getData(){
+  rows = await db.LoadData();
+  return;
+}
+
+//테이블 
+class TableList extends React.Component {
+  static defaultProps = {
+    rowslist: []
+  }
+  
+  render(){
+    //const {rowslist} = this.props
+    return (
+    <React.Fragment>
+    <Table size="small">
+    <TableHead>
+    <TableRow>
+    <TableCell>Title</TableCell>
+    <TableCell>Sender</TableCell>
+    <TableCell>DateTime</TableCell>
+    </TableRow>
+    </TableHead>
+    <TableBody>
+      {console.log("ㅇㅇ?",this.props.rowslist)}
+      {this.props.rowslist.map((row) => (
+      <TableRow key={row.id}>
+      <TableCell>{row.Title}</TableCell>
+      <TableCell>{row.Sender}</TableCell>
+      <TableCell>{row.Time}</TableCell>
+      </TableRow>
+      ))}
+  </TableBody>
+  </Table>
+  </React.Fragment>
+    )}
 }

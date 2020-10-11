@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import db from '../firebase';
 import dbfunction from '../function'
+import Sidebar from '../sidebar.jpg'
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -20,6 +22,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
+import TextField from '@material-ui/core/TextField';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import {MenuHome, MenuPassApply, MenuProfile, MenuPassDetail, MenuPassConfirm,
@@ -27,6 +30,7 @@ import {MenuHome, MenuPassApply, MenuProfile, MenuPassDetail, MenuPassConfirm,
   MenuMessageConfirmAdmin, MenuLocationManage} from '../menu'
 
 const drawerWidth = 240;
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,15 +61,6 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -86,6 +81,15 @@ const useStyles = makeStyles((theme) => ({
       width: theme.spacing(0),
     },
   },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
+  },
+  title: {
+    flexGrow: 1,
+  },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
@@ -97,7 +101,9 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(4),
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(5),
+    paddingLeft: theme.spacing(40),
+    paddingRight: theme.spacing(40),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -105,56 +111,74 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
+  textField: {
+    margin: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2)
+  },
 }));
 
 export default function Home(props) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
       setOpen(true);
     };
     const handleDrawerClose = () => {
       setOpen(false);
     };
-    
+
+    LoadData()
+
+    var name = sessionStorage.getItem('LoginedName')
+    var ServiceNo = sessionStorage.getItem('LoginedServiceNo')
+    var Unit = sessionStorage.getItem('LoginedUnit')
+    var Email = sessionStorage.getItem('Email')
+    var Rank = sessionStorage.getItem('Rank')
+    var PhoneNo = sessionStorage.getItem('PhoneNo')
+
+    const [useRank, setRank] = useState(`${Rank}`)
+    const [usePhoneNo, setPhoneNo] = useState(`${PhoneNo}`)
+    const [useUnit, setUnit] = useState(`${Unit}`)
+
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-    var name = sessionStorage.getItem('LoginedName');
-    //병
+
+    
+
     if((sessionStorage.getItem('CheckLogin')) == 1){
         return(
             <div className={classes.root}>
                 <CssBaseline/>
                 <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-                <Toolbar className={classes.toolbar}>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                >
-                <MenuIcon />
-                </IconButton>
-                <Typography component="h1" variant="h6" color="ingerit" noWrap className={classes.title} text-align="center">
-                  DOSIMS:&nbsp;국방장병출타통합관리체계  
-                </Typography>
-                <Typography component="h1" variant="subtitle2" color="ingerit" noWrap text-align="center">
-                  안녕하세요&nbsp;{name}&nbsp;님&nbsp;&nbsp;&nbsp;
-                </Typography>
-                <Button 
-                    type="submit"
-                    variant="contained"
-                    color="secondary"
-                    onClick={Logout}>
-                    로그아웃
-                </Button>
-                </Toolbar>
+                    <Toolbar className={classes.toolbar}>
+                        <IconButton className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+                            edge="start"
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerOpen}
+                        >
+                        <MenuIcon />
+                        </IconButton>
+                        <Typography component="h1" variant="h6" color="ingerit" noWrap className={classes.title} text-align="center">
+                            DOSIMS:&nbsp;국방장병출타통합관리체계  
+                        </Typography>
+                        <Typography component="h1" variant="subtitle2" color="ingerit" noWrap text-align="center">
+                            안녕하세요&nbsp;{Rank}&nbsp;{name}&nbsp;님&nbsp;&nbsp;&nbsp;
+                        </Typography>
+                        <Button 
+                            type="submit"
+                            variant="contained"
+                            color="secondary"
+                            onClick={Logout}>
+                            로그아웃
+                        </Button>
+                    </Toolbar>
                 </AppBar>
                 <Drawer
-                    variant="permanent"
                     classes={{
                         paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
                     }}
+                    variant="permanent"
                     open={open}
                 >
                     <div className={classes.toolbarIcon}>
@@ -173,17 +197,17 @@ export default function Home(props) {
                     <List>{MenuMessageConfirm}</List>
                 </Drawer>
                 <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Paper className={classes.paper}>
-                      <h1>홈 구현 예정</h1>
-                    </Paper>
-                  </Grid>
-                </Grid>
-                </Container>
-            </main>
+                    <div className={classes.appBarSpacer} />
+                    <Container maxWidth="lg" className={classes.container}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Paper className={classes.paper}>
+                                    <h1>홈 구현 예정</h1>
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                </main>
             </div>
         )
     }
@@ -191,8 +215,8 @@ export default function Home(props) {
     else if((sessionStorage.getItem('CheckLogin')) == 2) {
         return(
             <div className={classes.root}>
-                <CssBaseline/>
-                <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+            <CssBaseline/>
+            <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
                 <IconButton
                     edge="start"
@@ -242,17 +266,22 @@ export default function Home(props) {
                     <Divider/>
                     <List>{MenuPassConfirm}</List>
                     <List>{MenuPassDetail}</List>
-
                 </Drawer>
                 <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Paper className={classes.paper}>
-                      <h1>홈 구현 예정</h1>
-                    </Paper>
-                  </Grid>
+                    <Grid item xs={12}>
+                      <Paper className={classes.paper}>
+                      <TextField
+                        id="outlined-multiline-static"
+                        label="내용"
+                        multiline
+                        rows={4}
+                        variant="outlined"
+                      />
+                      </Paper>
+                    </Grid>
                 </Grid>
                 </Container>
             </main>
@@ -266,7 +295,57 @@ export default function Home(props) {
         );
     }
 
+    function OnChangePassword(){
+      db.ChangePassword(`${sessionStorage.getItem("Email")}`)
+    }
 
+    async function OnChangeProfile(){
+      var data = {
+        Rank: useRank,
+        Unit: useUnit,
+        PhoneNo: usePhoneNo
+      }
+      if((sessionStorage.getItem('CheckLogin')) == 1) {
+        db.changeProfile(data,sessionStorage.getItem('LoginedServiceNo'));
+        alert("개인정보가 변경되었습니다.")
+        props.history.replace('/Profile')
+        return;
+      }
+      else if((sessionStorage.getItem('CheckLogin')) == 2) {
+        db.changeProfileAdmin(data,sessionStorage.getItem('LoginedServiceNo'));
+        alert("개인정보가 변경되었습니다.")
+        props.history.replace('/Profile')
+        return;
+      }
+    }
+
+    async function LoadData(){
+      if((sessionStorage.getItem('CheckLogin')) == 1) {
+        
+        try {
+          await db.firestore.collection('Soldier  ').doc(sessionStorage.getItem('LoginedServiceNo')).get().then(function(doc) {
+            sessionStorage.setItem("Email", doc.data().Email)
+            sessionStorage.setItem("PhoneNo", doc.data().PhoneNo)
+            sessionStorage.setItem("Rank", doc.data().Rank)
+          });
+          return;
+        } catch(error) {
+          alert(error.message)
+        }
+      }
+      else if((sessionStorage.getItem('CheckLogin')) == 2) {
+        try {
+          await db.firestore.collection('Admin').doc(sessionStorage.getItem('LoginedServiceNo')).get().then(function(doc) {
+            sessionStorage.setItem("Email", doc.data().Email)
+            sessionStorage.setItem("PhoneNo", doc.data().PhoneNo)
+            sessionStorage.setItem("Rank", doc.data().Rank)
+          });
+          return;
+        } catch(error) {
+          alert(error.message)
+        }            
+      }
+    }
 
     async function Logout() {
         try{

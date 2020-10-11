@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './index.css';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 
 //페이지 import
-import Register from '../Register';
+import Register from '../Register'; 
 import Login from '../Login';
 import Home from '../Home';
 import LocationManage from '../LocationManage';
@@ -20,7 +20,8 @@ import Dashboard from '../Dashboard';
 
 
 
-export default function App(){
+class App extends Component{
+    render(){
     return (
         <div>
             <Router>
@@ -43,5 +44,6 @@ export default function App(){
             </Router>
             
         </div>
-    )
+    )}
 }
+export default App;
