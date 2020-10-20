@@ -1,6 +1,7 @@
 import React, {Components} from 'react';
 import db from '../firebase'
 import dbfunction from '../function'
+import {firestore, firebaseAuth} from '../firebase2'
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -32,7 +33,7 @@ import {MenuHome, MenuPassApply, MenuProfile, MenuPassDetail, MenuPassConfirm,
   import TableHead from '@material-ui/core/TableHead';
   import TableRow from '@material-ui/core/TableRow';
 import { ReplyTwoTone } from '@material-ui/icons';
-import { render } from '@testing-library/react';
+import { queryAllByAltText, render } from '@testing-library/react';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -113,7 +114,6 @@ const useStyles = makeStyles((theme) => ({
     height: 240,
   },
 }));
-var rows = []
 
 export default function MessageConfirm(props) {
     const classes = useStyles();
@@ -126,10 +126,8 @@ export default function MessageConfirm(props) {
     };
 
     var name = sessionStorage.getItem('LoginedName');
+    
     //병
-    
-    
-
     if((sessionStorage.getItem('CheckLogin')) == 1){
       
       return (
@@ -189,7 +187,7 @@ export default function MessageConfirm(props) {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Paper className={classes.paper}>
-                <TableList rowslist={db.LoadData()}/>
+                <TableList/>
               </Paper>
               </Grid>
             </Grid>
@@ -213,24 +211,30 @@ export default function MessageConfirm(props) {
       }            
     }
 
-    
-
-    function CreateData(id, Title, Sender, Time){
-      return {id, Title, Sender, Time};
-  }
-}
-
-async function getData(){
-  rows = await db.LoadData();
-  return;
-}
-
-//테이블 
-class TableList extends React.Component {
-  static defaultProps = {
-    rowslist: []
-  }
   
+    
+}
+
+class TableList extends React.Component {
+
+  constructor(props){
+    super(props)
+    this.state = {list: []}
+  }
+
+  componentDidMount = () => {
+    firestore.collection("MessageAdmin").where("Unit","==",sessionStorage.getItem("LoginedUnit")).get().then((Snapshot) => {
+      let rows = []
+      Snapshot.forEach((doc) => {
+        rows.push(Object.assign (doc.data(), {id: doc.id}) );
+      });
+      return rows;
+    }).then((res) => {
+      this.setState({list: res})
+    })
+    
+  }
+
   render(){
     //const {rowslist} = this.props
     return (
@@ -239,19 +243,20 @@ class TableList extends React.Component {
     <TableHead>
     <TableRow>
     <TableCell>Title</TableCell>
+    <TableCell>내용</TableCell>
     <TableCell>Sender</TableCell>
     <TableCell>DateTime</TableCell>
     </TableRow>
     </TableHead>
     <TableBody>
-      {console.log("ㅇㅇ?",this.props.rowslist)}
-      {this.props.rowslist.map((row) => (
-      <TableRow key={row.id}>
-      <TableCell>{row.Title}</TableCell>
-      <TableCell>{row.Sender}</TableCell>
-      <TableCell>{row.Time}</TableCell>
-      </TableRow>
-      ))}
+      {this.state.list.map((row) => (
+            <TableRow key={row.id}>
+            <TableCell>{row.Title}</TableCell>
+            <TableCell>{row.Context}</TableCell>
+            <TableCell>{row.Sender}</TableCell>
+            <TableCell>{row.Time}</TableCell>
+            </TableRow>
+            ))}
   </TableBody>
   </Table>
   </React.Fragment>

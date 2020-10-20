@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import 'firebase/auth'
-import { Rotate90DegreesCcwSharp } from "@material-ui/icons";
+
 
 // firebase 설정과 관련된 개인 정보
 const firebaseConfig = {
@@ -12,6 +12,8 @@ const firebaseConfig = {
     storageBucket: "leave-pass-management-system.appspot.com",
     messagingSenderId: "860597117782"
 };
+
+var newlist = new Array(5);
 
 // firebase의 firestore 인스턴스를 변수에 저장
 class db{
@@ -82,30 +84,6 @@ class db{
         return this.firestore.collection("MessageAdmin").add(data)
     }
 
-    
-
-    LoadData(){
-        //function CreateData(id, Title, Sender, Time){
-        //    return {id, Title, Sender, Time}
-        //}
-        //rows = new Array(10);
-        //var temp;
-        var i = 0;
-        var newlist = new Array(5);
-            this.firestore.collection("MessageAdmin").where("Unit","==",sessionStorage.getItem("LoginedUnit")).onSnapshot(function(snapshot) {
-            
-            snapshot.docChanges().forEach(function(change){
-                var row = change.doc.data();
-                newlist[i] = row;
-                console.log("1단계[",i,"]",newlist[i])
-                i++;
-            })
-            console.log("2단계",newlist)
-            console.log("2단계[0]",newlist[0])
-            return newlist;
-        })
-        return newlist
-    }
-}
+ }
 // 필요한 곳에서 사용할 수 있도록 내보내기
 export default new db()
